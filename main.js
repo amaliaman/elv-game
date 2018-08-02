@@ -17,22 +17,14 @@ $(document).ready(function () {
 });
 
 function startLevel(level) {
-    // If we're not on start - pause for a bit before redrawing cubes
-    let levelInterval = 0;
-    if (level > 1) {
-        levelInterval = LEVEL_INTERVAL;
+    resetLevel();
+    $('#message').text(`Level ${currentLevel}, you have ${failTimeout / 1000} seconds!`);
+
+    // Create new cubes according to level
+    for (let i = 0; i < level; i++) {
+        createCube();
     }
-
-    setTimeout(() => {
-        resetLevel();
-        $('#message').text(`Level ${currentLevel}, you have ${failTimeout / 1000} seconds!`);
-
-        // Create new cubes according to level
-        for (let i = 0; i < level; i++) {
-            createCube();
-        }
-        setTimer();
-    }, levelInterval);
+    setTimer();
 }
 
 function createCube() {
