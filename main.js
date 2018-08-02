@@ -42,7 +42,7 @@ function createCube() {
     newCube.click(function () {
         cubeCounter++;
         $(this).addClass('clicked');
-        $(this).unbind('click');
+        $(this).off('click');
         checkLevelPass();
     });
 
@@ -62,7 +62,7 @@ function failLevel(level) {
     // Notify the user and show buttons to proceed
     $('#cube-container > .cube').each(function () { 
         $(this).addClass('fail');
-        $(this).unbind('click');
+        $(this).off('click');
       });
     $('#message').text(`You failed level ${level} 😱`);
     $('#retry').show().click(() => startLevel(level));
