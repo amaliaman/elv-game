@@ -1,22 +1,56 @@
-.cube {
-    width: 80px;
-    height: 80px;
-    background-color: mediumslateblue;
-    float: left;
-    margin-right: 10px;
-    margin-bottom: 10px;
+html {
+    background: url(images/background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+body {
+    color: #04344a;
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+}
+
+#wrapper {
+    width: 70vw;
+    margin: 0 auto;
+}
+
+#cube-container {
+    position: relative;
+    height: 50vh;
+}
+
+.random {
+    filter: drop-shadow(3px 3px 5px gray);
+    color: mediumslateblue;
+    font-size: 60px;
+    position: absolute;
 }
 
 #message {
-    margin-top: 10px;
+    margin: 10px auto;
     font-size: large;
-    clear: both;
+    font-weight: bold;
 }
 
 .clicked {
-    background-color: gray;
+    opacity: 0.5;
 }
 
 .fail {
-    opacity: 0.7;
+    opacity: 0.5;
+    filter: blur(1px);
+}
+
+button {
+    padding: 10px 15px;
+    margin: 10px;
+    background-color: #073e54;
+    color: white;
+    border: none;
+    box-sizing: content-box;
+    border-radius: 5px;
+    font-family: 'Open Sans', sans-serif;
 }

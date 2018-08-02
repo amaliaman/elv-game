@@ -3,6 +3,7 @@ const INITIAL_LEVEL = 1;
 const INITIAL_FAIL_TIMEOUT = 3000;
 const LEVEL_INTERVAL = 500;
 const LEVEL_TIME_INCREMENT = 100;
+const CUBE_DIMENSIONS = 60;
 
 // Global variables
 let failTimeout = INITIAL_FAIL_TIMEOUT;
@@ -30,29 +31,53 @@ function startLevel(level) {
         for (let i = 0; i < level; i++) {
             createCube();
         }
+        setTimer();
     }, levelInterval);
-
-    setTimer();
 }
 
 function createCube() {
     // Create new cube
-    const newCube = $('<div>');
-    newCube.addClass('cube');
+    // const newCube = $('<div>');
+    const newCube = $('<i class="fas fa-plane"></i>');
+    newCube.addClass('random');
+
     newCube.click(function () {
         cubeCounter++;
         $(this).addClass('clicked');
+        newCube.css('color', 'gray');
         $(this).off('click');
         checkLevelPass();
     });
 
+    // Randomize position, color & rotation
+    const randomPosition = getRandomPosition();
+    newCube.css('left', randomPosition.x);
+    newCube.css('top', randomPosition.y);
+    newCube.css('color', getRandomColor());
+    newCube.css('transform', `rotate(${getRandomDegree()})`);
+
     // Attach cube to container
-    $('#cube-container').append(newCube);
+    newCube.appendTo('#cube-container').fadeOut(0).fadeIn(500);
+}
+
+function getRandomPosition() {
+    const x = Math.floor((Math.random() * ($('#cube-container').width() - CUBE_DIMENSIONS)));
+    const y = Math.floor((Math.random() * ($('#cube-container').height() - CUBE_DIMENSIONS)));
+    return { x, y };
+}
+
+function getRandomColor() {
+    return `rgb(${(Math.floor(Math.random() * 256))}, 
+        ${(Math.floor(Math.random() * 256))}, ${(Math.floor(Math.random() * 256))})`;
+}
+
+function getRandomDegree() {
+    return `${Math.floor(Math.random() * 360)}deg`;
 }
 
 function checkLevelPass() {
     // Each click increments the counter, check if we've reached the required clicks to pass the level
-    if (cubeCounter == currentLevel) {
+    if (cubeCounter === currentLevel) {
         failTimeout += LEVEL_TIME_INCREMENT;
         startLevel(++currentLevel);
     }
@@ -60,11 +85,11 @@ function checkLevelPass() {
 
 function failLevel(level) {
     // Notify the user and show buttons to proceed
-    $('#cube-container > .cube').each(function () { 
+    $('#cube-container').children().each(function () {
         $(this).addClass('fail');
         $(this).off('click');
-      });
-    $('#message').text(`You failed level ${level} 😱`);
+    });
+    $('#message').text(`You failed level ${level}!`);
     $('#retry').show().click(() => startLevel(level));
     $('#reset').show().click(() => resetGame());
 }
