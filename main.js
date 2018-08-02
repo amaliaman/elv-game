@@ -29,7 +29,6 @@ function startLevel(level) {
 
 function createCube() {
     // Create new cube
-    // const newCube = $('<div>');
     const newCube = $('<i class="fas fa-plane"></i>');
     newCube.addClass('random');
 
