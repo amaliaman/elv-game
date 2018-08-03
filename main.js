@@ -81,8 +81,8 @@ function failLevel(level) {
         $(this).off('click');
     });
     $('#message').text(`You failed level ${level}!`);
-    $('#retry').show().click(() => startLevel(level));
-    $('#reset').show().click(() => resetGame());
+    $('#retry').css('visibility','visible').click(() => startLevel(level));
+    $('#reset').css('visibility','visible').click(() => resetGame());
 }
 
 function setTimer() {
@@ -93,8 +93,8 @@ function setTimer() {
 }
 
 function resetLevel() {
-    $('#retry').hide();
-    $('#reset').hide();
+    $('#retry').css('visibility','hidden').off('click');
+    $('#reset').css('visibility','hidden').off('click');
     $('#cube-container').empty();
     $('#message').text('');
     cubeCounter = 0;
