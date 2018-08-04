@@ -48,7 +48,7 @@ function createCube() {
     newCube.css('transform', `rotate(${getRandomDegree()})`);
 
     // Attach cube to container
-    newCube.appendTo('#cube-container').fadeOut(0).fadeIn(500);
+    newCube.appendTo('#cube-container').fadeIn(700);
 }
 
 function getRandomPosition() {
