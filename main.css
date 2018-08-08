@@ -43,6 +43,7 @@ body {
 
 .clicked {
     opacity: 0.5;
+    z-index: -100;
 }
 
 .fail {
