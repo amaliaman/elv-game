@@ -4,40 +4,61 @@ const INITIAL_FAIL_TIMEOUT = 3000;
 const LEVEL_INTERVAL = 500;
 const LEVEL_TIME_INCREMENT = 100;
 const CUBE_DIMENSIONS = 60;
+const COUNTDOWN_INTERVAL = 100;
 
 // Global variables
-let failTimeout = INITIAL_FAIL_TIMEOUT;
-let currentLevel = INITIAL_LEVEL;
-let cubeCounter = 0;
-let timer;
-
-// Attach event listeners to cubes
-$('#cube-container').on('click', '.random', function () {
-    cubeCounter++;
-    $(this).addClass('clicked');
-    $(this).css('color', 'gray');
-    $(this).off('click');
-    checkLevelPass();
-});
+let _failTimeout = INITIAL_FAIL_TIMEOUT;
+let _currentLevel = INITIAL_LEVEL;
+let _timer;
+let _countdown;
+let _levelCountdownIdGlob;
+let _cubeCounter = 0;
 
 // Start the game
-startLevel(currentLevel);
+startLevel(_currentLevel);
 
-// Functions
+
+/* ==================== Functions ==================== */
+
 function startLevel(level) {
     resetLevel();
-    $('#message').text(`Level ${currentLevel}, you have ${failTimeout / 1000} seconds!`);
-    
+
+    $('#message').html(`Level <span id="level-number">${_currentLevel}</span> - you have <span id="remaining-time">${_failTimeout / 1000}</span> seconds!`);
+
     // Create new cubes according to level
     for (let i = 0; i < level; i++) {
         createCube();
     }
     setTimer();
+
+    // Start level countdown
+    _countdown = _failTimeout;
+    const levelCountdownId = setInterval(levelCountdown, COUNTDOWN_INTERVAL);
+    _levelCountdownIdGlob = levelCountdownId;
+}
+
+function levelCountdown() {
+    _countdown -= COUNTDOWN_INTERVAL;
+    const num = _countdown / 1000;
+    $('#remaining-time').text(num.toFixed(1));
+}
+
+function stopLevelCountdown() {
+    clearInterval(_levelCountdownIdGlob);
 }
 
 function createCube() {
     // Create new cube
     const $newCube = $('<i class="fas fa-plane random"></i>');
+
+    // Attach event listeners to cubes
+    $newCube.click(function () {
+        _cubeCounter++;
+        $(this).addClass('clicked');
+        $(this).css('color', 'gray');
+        $(this).off('click');
+        checkLevelPass();
+    });
 
     // Randomize position, color & rotation
     const randomPosition = getRandomPosition();
@@ -69,40 +90,41 @@ function getRandomDegree() {
 
 function checkLevelPass() {
     // Each click increments the counter, check if we've reached the required clicks to pass the level
-    if (cubeCounter === currentLevel) {
-        failTimeout += LEVEL_TIME_INCREMENT;
-        startLevel(++currentLevel);
+    if (_cubeCounter === _currentLevel) {
+        _failTimeout += LEVEL_TIME_INCREMENT;
+        startLevel(++_currentLevel);
     }
 }
 
 function failLevel(level) {
+    stopLevelCountdown();
+
+    $('#cube-container').children().off().addClass('fail');
+
     // Notify the user and show buttons to proceed
-    $('#cube-container').children().each(function () {
-        $(this).addClass('fail');
-        $(this).off('click');
-    });
     $('#message').text(`You failed level ${level}!`);
     $('#retry').css('visibility', 'visible').click(() => startLevel(level));
     $('#reset').css('visibility', 'visible').click(() => resetGame());
 }
 
 function setTimer() {
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-        failLevel(currentLevel);
-    }, failTimeout);
+    clearTimeout(_timer);
+    _timer = setTimeout(function () {
+        failLevel(_currentLevel);
+    }, _failTimeout);
 }
 
 function resetLevel() {
-    $('#retry').css('visibility', 'hidden').off('click');
-    $('#reset').css('visibility', 'hidden').off('click');
+    $('#retry').css('visibility', 'hidden').off();
+    $('#reset').css('visibility', 'hidden').off();
     $('#cube-container').empty();
     $('#message').text('');
-    cubeCounter = 0;
+    _cubeCounter = 0;
+    stopLevelCountdown();
 }
 
 function resetGame() {
-    currentLevel = INITIAL_LEVEL;
-    failTimeout = INITIAL_FAIL_TIMEOUT;
-    startLevel(currentLevel);
+    _currentLevel = INITIAL_LEVEL;
+    _failTimeout = INITIAL_FAIL_TIMEOUT;
+    startLevel(_currentLevel);
 }
