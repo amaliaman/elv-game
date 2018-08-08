@@ -11,15 +11,23 @@ let currentLevel = INITIAL_LEVEL;
 let cubeCounter = 0;
 let timer;
 
-// Run after document loads
-$(document).ready(function () {
-    startLevel(currentLevel);
+// Attach event listeners to cubes
+$('#cube-container').on('click', '.random', function () {
+    cubeCounter++;
+    $(this).addClass('clicked');
+    $(this).css('color', 'gray');
+    $(this).off('click');
+    checkLevelPass();
 });
 
+// Start the game
+startLevel(currentLevel);
+
+// Functions
 function startLevel(level) {
     resetLevel();
     $('#message').text(`Level ${currentLevel}, you have ${failTimeout / 1000} seconds!`);
-
+    
     // Create new cubes according to level
     for (let i = 0; i < level; i++) {
         createCube();
@@ -29,26 +37,19 @@ function startLevel(level) {
 
 function createCube() {
     // Create new cube
-    const newCube = $('<i class="fas fa-plane"></i>');
-    newCube.addClass('random');
-
-    newCube.click(function () {
-        cubeCounter++;
-        $(this).addClass('clicked');
-        newCube.css('color', 'gray');
-        $(this).off('click');
-        checkLevelPass();
-    });
+    const $newCube = $('<i class="fas fa-plane random"></i>');
 
     // Randomize position, color & rotation
     const randomPosition = getRandomPosition();
-    newCube.css('left', randomPosition.x);
-    newCube.css('top', randomPosition.y);
-    newCube.css('color', getRandomColor());
-    newCube.css('transform', `rotate(${getRandomDegree()})`);
+    $newCube.css({
+        left: randomPosition.x,
+        top: randomPosition.y,
+        color: getRandomColor(),
+        transform: `rotate(${getRandomDegree()})`
+    });
 
     // Attach cube to container
-    newCube.appendTo('#cube-container').fadeIn(700);
+    $newCube.appendTo('#cube-container').fadeIn(700);
 }
 
 function getRandomPosition() {
@@ -81,8 +82,8 @@ function failLevel(level) {
         $(this).off('click');
     });
     $('#message').text(`You failed level ${level}!`);
-    $('#retry').css('visibility','visible').click(() => startLevel(level));
-    $('#reset').css('visibility','visible').click(() => resetGame());
+    $('#retry').css('visibility', 'visible').click(() => startLevel(level));
+    $('#reset').css('visibility', 'visible').click(() => resetGame());
 }
 
 function setTimer() {
@@ -93,8 +94,8 @@ function setTimer() {
 }
 
 function resetLevel() {
-    $('#retry').css('visibility','hidden').off('click');
-    $('#reset').css('visibility','hidden').off('click');
+    $('#retry').css('visibility', 'hidden').off('click');
+    $('#reset').css('visibility', 'hidden').off('click');
     $('#cube-container').empty();
     $('#message').text('');
     cubeCounter = 0;
